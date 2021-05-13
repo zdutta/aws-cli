@@ -451,7 +451,30 @@ class OperationDocumentEventHandler(CLIDocumentEventHandler):
             doc.style.dedent()
             doc.write('}')
         elif argument_model.type_name == 'structure':
-            self._doc_input_structure_members(doc, argument_model, stack)
+            if argument_model.is_document_type:
+                doc.write("Document Primitive Types")
+                doc.style.indent()
+                doc.style.new_line()
+                doc.write("null: The explicit lack of a value.")
+                doc.style.new_line()
+                doc.write("boolean: A Boolean true or false value.")
+                doc.style.new_line()
+                doc.write("string: A UTF-8 encoded string.")
+                doc.style.new_line()
+                doc.write("number: A numeric value with arbitrary precision")
+                doc.style.dedent()
+                doc.style.new_line()
+                doc.style.new_line()
+                doc.write("Document Aggregate Types")
+                doc.style.indent()
+                doc.style.new_line()
+                doc.write("array: A heterogeneous ordered array of document types.")
+                doc.style.new_line()
+                doc.write("object: A heterogeneous map of strings to document types.")
+                doc.style.dedent()
+                doc.style.new_line()
+            else:
+                self._doc_input_structure_members(doc, argument_model, stack)
 
     def _doc_input_structure_members(self, doc, argument_model, stack):
         doc.write('{')

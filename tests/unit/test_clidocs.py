@@ -130,6 +130,41 @@ class TestRecursiveShapes(unittest.TestCase):
         self.assert_rendered_docs_contain('None')
 
 
+class TestDocumentTypes(unittest.TestCase):
+    def setUp(self):
+        self.arg_table = {}
+        self.help_command = mock.Mock()
+        self.help_command.event_class = 'custom'
+        self.help_command.arg_table = self.arg_table
+        self.operation_model = mock.Mock()
+        self.operation_model.service_model.operation_names = []
+        self.help_command.obj = self.operation_model
+        self.operation_handler = OperationDocumentEventHandler(
+            self.help_command)
+
+    def assert_rendered_docs_contain(self, expected):
+        writes = [args[0][0] for args in
+                  self.help_command.doc.write.call_args_list]
+        writes = '\n'.join(writes)
+        self.assertIn(expected, writes)
+
+    def test_memberless_document_type_input(self):
+        shape_map = {
+            'documentType': {
+                'type': 'structure',
+                'document': True
+            }
+        }
+        shape = StructureShape('documentType', shape_map['documentType'],
+                               ShapeResolver(shape_map))
+
+        operation_model = mock.Mock()
+        operation_model.output_shape = shape
+        self.help_command.obj = operation_model
+        self.operation_handler.doc_output(self.help_command, 'event-name')
+        self.assert_rendered_docs_contain('None')
+
+
 class TestCLIDocumentEventHandler(unittest.TestCase):
     def setUp(self):
         self.session = mock.Mock()
