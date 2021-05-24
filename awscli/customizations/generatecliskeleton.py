@@ -190,6 +190,10 @@ class YAMLArgumentGenerator(ArgumentGenerator):
         if is_required:
             comment_components.append('[REQUIRED]')
         comment_components.append(get_shape_doc_overview(member_shape))
+        if (hasattr(member_shape, 'is_document_type') and
+                member_shape.is_document_type):
+            comment_components.append('This value is a document type that '
+                                      'can have arbitrary content')
         if getattr(member_shape, 'enum', None):
             comment_components.append(
                 self._get_enums_comment_content(member_shape.enum)

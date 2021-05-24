@@ -340,3 +340,55 @@ class TestGenerateCliSkeleton(unittest.TestCase):
         )
         self.assert_skeleton_equals(
             'yaml-input', expected, input_shape=input_shape)
+
+    def test_generate_yaml_input_document_types(self):
+        input_shape = {
+            'A': {
+                'type': 'structure',
+                'documentation': 'foo',
+                'members': {
+                    'B': {
+                        'type': 'structure',
+                        'document': True,
+                        'documentation': 'bar'
+
+                    }
+                },
+            },
+        }
+        expected = (
+            "A:  # foo.\n"
+            "  B: {}  # bar. This value is a document type that can have arbitrary content\n"
+        )
+        self.assert_skeleton_equals(
+            'yaml-input', expected, input_shape=input_shape)
+
+    def test_generate_yaml_input_document_types_nested(self):
+        input_shape = {
+            'A': {
+                'type': 'structure',
+                'documentation': 'foo',
+                'members': {
+                    'B': {
+                        'type': 'structure',
+                        'documentation': 'bar',
+                        'members':{
+                            'C': {
+                                'type': 'structure',
+                                'document': True,
+                                'documentation': 'fizz'
+
+                            }
+                        }
+
+                    }
+                },
+            },
+        }
+        expected = (
+            "A:  # foo.\n"
+            "  B:  # bar.\n"
+            "    C: {}  # fizz. This value is a document type that can have arbitrary content\n"
+        )
+        self.assert_skeleton_equals(
+            'yaml-input', expected, input_shape=input_shape)
